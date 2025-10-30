@@ -1,10 +1,8 @@
-const API_URL = "https://usmanlive.com/wp-json/api/stories";
-
 function getNotes() {
   $("#loading").show();
   $("#notesList").empty();
 
-  $.get(API_URL, function (data) {
+  $.get("https://usmanlive.com/wp-json/api/stories", function (data) {
     $("#loading").hide();
 
     data.forEach(note => {
@@ -36,14 +34,13 @@ function getNotes() {
 
 $("#noteForm").submit(function (e) {
   e.preventDefault();
-  const id = $("#noteId").val(); // hidden field to track note id
+  const id = $("#noteId").val(); 
   const title = $("#title").val();
   const content = $("#body").val();
 
   if (id) {
-    // --- UPDATE existing note ---
     $.ajax({
-      url: `${API_URL}/${id}`,
+      url: "https://usmanlive.com/wp-json/api/stories/" + id,
       method: "PUT",
       data: { title, content },
       success: function () {
@@ -54,9 +51,8 @@ $("#noteForm").submit(function (e) {
       error: () => alert("Error updating note!"),
     });
   } else {
-    // --- CREATE new note ---
     $.ajax({
-      url: API_URL,
+      url: "https://usmanlive.com/wp-json/api/stories",
       method: "POST",
       data: { title, content },
       success: function () {
@@ -76,7 +72,6 @@ function resetForm() {
   $("#cancelEdit").hide();
 }
 
-// When "Edit" button clicked
 $(document).on("click", ".editBtn", function () {
   $("#noteId").val($(this).data("id"));
   $("#title").val($(this).data("title"));
@@ -87,12 +82,11 @@ $(document).on("click", ".editBtn", function () {
 
 $("#cancelBtn").click(resetForm);
 
-// Delete note
 $(document).on("click", ".deleteBtn", function () {
   const id = $(this).data("id");
   if (confirm("Are you sure you want to delete this note?")) {
     $.ajax({
-      url: `${API_URL}/${id}`,
+      url: "https://usmanlive.com/wp-json/api/stories/" + id,
       type: "DELETE",
       success: function () {
         alert("Note deleted successfully!");
@@ -106,6 +100,5 @@ $(document).on("click", ".deleteBtn", function () {
 });
 
 $(document).ready(() => {
-  $("body").append('<input type="hidden" id="noteId">');
   getNotes();
 });
